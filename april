@@ -1,0 +1,8 @@
+#!/usr/bin/env php
+<?php
+
+require_once('bootstrap.php');
+//require_once('April.php');
+
+$april = new April\April($_SERVER['argv']);
+$april->run();

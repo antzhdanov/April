@@ -1,6 +1,6 @@
 <?php
 
-$root = dirname(__DIR__);
+$root = __DIR__;
 
 $nsMap = array(
     'April\\Tests' => $root . '/tests',

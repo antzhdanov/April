@@ -4,9 +4,17 @@ namespace April\Tests;
 
 class TestCase extends \PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->testsDir = __DIR__ . '/Data/';
+        $this->casesDir = dirname(__DIR__) . '/cases/';
+    }
+
     public function execute($command = '')
     {
-        return shell_exec('php April.php ' . $command);
+        return shell_exec('./april ' . $command);
     }
 
     public function assertSubstring($needle, $haystack)

@@ -1,5 +1,7 @@
 <?php
 
+namespace April;
+
 class April
 {
     /**
@@ -19,6 +21,12 @@ class April
      * @var array
      */
     protected $args;
+
+    /**
+     * Plugin manager
+     * @var April\Pugin\Manager
+     */
+    public $pluginManager;
 
     /**
      * The mode April runs in: run, generate, etc.
@@ -47,7 +55,7 @@ class April
     {
         // collect core actions
         // include all files from src/actions/
-        $actionsDir = __DIR__ . '/src/Actions/';
+        $actionsDir = dirname(__DIR__) . '/src/Actions/';
 
         foreach (scandir($actionsDir) as $file) {
             if (preg_match('/([\w\d]+)\.php$/', $file, $matches)) {
@@ -62,6 +70,10 @@ class April
                 $this->actions[$menuItem['action']] = array_merge($menuItem, array('object' => $action));
             }
         }
+
+        // init plugin manager
+        $this->pluginManager = new Plugin\Manager($this);
+        $this->pluginManager->init();
     }
 
     protected function help()
