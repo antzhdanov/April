@@ -13,18 +13,18 @@ class RunTest extends TestCase
         $this->assertTrue(strpos($result, 'run') !== false, 'Run action doesn\'t expose its menu items');
     }
 
-    public function testRunExistsOnEmptyTestCase()
+    public function testRunExitsOnEmptyTestCase()
     {
         $result = $this->execute('run');
 
         $this->assertSubstring('Please specify the test case to run', $result);
     }
 
-    public function testRunExistsOnWrongTestcaseFilename()
+    public function testRunExitsOnNonexistentTestcase()
     {
-        $result = $this->execute('run $$%$%fgdfg');
+        $result = $this->execute('run unittest_testcase_sample2');
 
-        $this->assertSubstring('Wrong test case name. Filename contains restricted characters.', $result);
+        $this->assertSubstring('Testcase file doesn\'t exist.', $result);
     }
 
     public function testGeneratesScriptsBasedOnTestcaseFile()
@@ -85,19 +85,20 @@ class RunTest extends TestCase
         $this->assertContains('Ran 1000 iterations in ', $result, 'Wrong output');
     }
 
-    public function testCallsPlugins()
+    public function testCallsProcessAction()
     {
-        $result = $this->getTestResults();
 
-        // include process plugin
-        $this->markTestIncomplete('NYI');
-    }
+        $april = $this->getMock('April\April',
+            array('subrequest'),
+            array($this->april->getRawArgs())
+        );
 
-    protected function getTestResults()
-    {
-        $name = 'unittest_testcase_sample.php';
-        copy($this->testsDir . $name, $this->casesDir . $name);
+        $april->expects($this->once())
+            ->method('subrequest')
+            ->with('process');
 
-        return $this->execute('run unittest_testcase_sample');
+        $this->setApplication($april);
+
+        $this->getTestResults();
     }
 }

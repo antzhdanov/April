@@ -2,13 +2,10 @@
 
 namespace April\Actions;
 
-class Run
-{
-    public function __construct($april)
-    {
-        $this->april = $april;
-    }
+use April\Abstracts\Action;
 
+class Run extends Action
+{
     public function menu()
     {
         return array(
@@ -24,8 +21,8 @@ class Run
             return;
         }
 
-        if (!preg_match('/^\w+$/', $args[1])) {
-            echo 'Wrong test case name. Filename contains restricted characters.' . "\n\n";
+        if (!file_exists("cases/$args[1].php")) {
+            echo "Testcase file doesn't exist.\n";
             return;
         }
 

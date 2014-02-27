@@ -10,11 +10,49 @@ class TestCase extends \PHPUnit_Framework_TestCase
 
         $this->testsDir = __DIR__ . '/Data/';
         $this->casesDir = dirname(__DIR__) . '/cases/';
+
+        $this->setApplication(new \April\April(array()));
     }
 
-    public function execute($command = '')
+    /**
+     * Execute command
+     *
+     * @param array
+     * @param function
+     */
+    public function execute($command = '', $beforeInit = null)
     {
-        return shell_exec('./april ' . $command);
+        ob_start();
+
+        $this->april->setRawArgs(
+            array_merge(array('april'), explode(' ', $command))
+        );
+
+        if ($beforeInit)
+            $beforeInit($this->april);
+
+        $this->april
+            ->init()
+            ->run();
+
+        $out = ob_get_contents();
+        ob_end_clean();
+
+        return $out;
+    }
+
+    public function setApplication($april = null)
+    {
+        $this->april = $april;
+        return $this;
+    }
+
+    protected function getTestResults()
+    {
+        $name = 'unittest_testcase_sample.php';
+        copy($this->testsDir . $name, $this->casesDir . $name);
+
+        return $this->execute('run unittest_testcase_sample');
     }
 
     public function assertSubstring($needle, $haystack)

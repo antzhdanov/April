@@ -3,7 +3,8 @@
 $root = __DIR__;
 
 $nsMap = array(
-    'April\\Tests' => $root . '/tests',
+    'April\\Plugin\\' => $root . '/plugins',
+    'April\\Tests\\' => $root . '/tests',
     'April\\' => $root . '/src'
 );
 

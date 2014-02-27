@@ -2,7 +2,9 @@
 
 namespace April\Actions;
 
-class Generate
+use April\Abstracts\Action;
+
+class Generate extends Action
 {
     /**
      * Accepted sections in test case

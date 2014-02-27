@@ -26,7 +26,7 @@ class April
      * Plugin manager
      * @var April\Pugin\Manager
      */
-    public $pluginManager;
+    protected $pluginManager;
 
     /**
      * The mode April runs in: run, generate, etc.
@@ -34,9 +34,37 @@ class April
      */
     protected $actions;
 
+    /**
+     * @param array
+     */
     public function __construct($args)
     {
         $this->rawArgs = $args;
+    }
+
+    public function setRawArgs($args)
+    {
+        $this->rawArgs = $args;
+        return $this;
+    }
+
+    public function getRawArgs()
+    {
+        return $this->rawArgs;
+    }
+
+    public function setPluginManager($manager)
+    {
+        $this->pluginManager = $manager;
+        return $this;
+    }
+
+    public function getPluginManager()
+    {
+        if (!$this->pluginManager)
+            $this->pluginManager = new PluginManager($this);
+
+        return $this->pluginManager;
     }
 
     /**
@@ -51,16 +79,17 @@ class April
         }
     }
 
-    protected function init()
+    public function init()
     {
+        // parse command line arguments
+        $this->parseArgs();
+
         // collect core actions
         // include all files from src/actions/
         $actionsDir = dirname(__DIR__) . '/src/Actions/';
 
         foreach (scandir($actionsDir) as $file) {
             if (preg_match('/([\w\d]+)\.php$/', $file, $matches)) {
-                require_once($actionsDir . $file);
-
                 $className = 'April\\Actions\\' . $matches[1];
                 $action = new $className($this);
 
@@ -72,8 +101,9 @@ class April
         }
 
         // init plugin manager
-        $this->pluginManager = new Plugin\Manager($this);
-        $this->pluginManager->init();
+        $this->getPluginManager()->init();
+
+        return $this;
     }
 
     protected function help()
@@ -105,12 +135,6 @@ class April
 
     public function run()
     {
-        // parse command line arguments
-        $this->parseArgs();
-
-        // init application
-        $this->init();
-
         try {
             $action = $this->getAction($this->mode);
             $action->run($this->args);

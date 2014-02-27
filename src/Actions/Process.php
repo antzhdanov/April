@@ -2,13 +2,10 @@
 
 namespace April\Actions;
 
-class Process
-{
-    public function __construct($april)
-    {
-        $this->april = $april;
-    }
+use April\Abstracts\Action;
 
+class Process extends Action
+{
     public function menu()
     {
         return array(
@@ -34,6 +31,7 @@ class Process
             echo (string)($test[4] / $test[1]) . "s per iteration.\n";
         }
 
-        // TODO: process data with plugins
+        // process data with plugins
+        $this->april->getPluginManager()->process($data);
     }
 }
